@@ -655,6 +655,14 @@ html[lang="en"] .vsection__stats{margin-top:20px;padding-top:18px}
   .conclusion__inner{padding:60px 0}
 }
 @media (max-width:640px){
+  .nav__now{display:none}
+  .nav__brand{position:static;transform:none;left:auto}
+  .nav{padding:16px 16px}
+  .nav__brand img{height:17px}
+  .nav__brand-sub{font-size:14px;letter-spacing:.26em}
+  .nav__lang{gap:6px}
+  .lang-btn{font-size:12px;padding:5px 3px}
+  .nav__menu-btn{padding:6px}
   .hero__desc{font-size:14.5px;line-height:1.9;margin-top:20px}
   .hero__model{font-size:11px;letter-spacing:.4em;margin-top:14px}
   .hero__name img{height:clamp(44px,11vw,64px)}
