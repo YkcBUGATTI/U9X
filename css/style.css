@@ -538,10 +538,13 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 
 /* ---------- 页脚 ---------- */
 .footer{border-top:1px solid var(--line);padding:56px 0 40px}
-.footer__portal{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;padding:24px 0 28px;margin-bottom:36px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.footer__portal-label{font-size:12.5px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;font-family:var(--mono)}
-.footer__portal-link{font-size:12px;letter-spacing:.16em;color:var(--txt);text-transform:uppercase;font-family:var(--mono);padding:11px 20px;border:1px solid var(--line);transition:border-color .3s,color .3s}
-.footer__portal-link:hover{border-color:var(--gold);color:var(--gold)}
+.footer__portal{display:flex;justify-content:space-between;align-items:center;gap:28px;flex-wrap:wrap;padding:36px 40px;margin-bottom:40px;border:1px solid var(--line);background:linear-gradient(120deg,rgba(201,162,75,.10),transparent 70%)}
+.footer__portal-text{max-width:660px}
+.footer__portal-kicker{font-size:11px;letter-spacing:.34em;color:var(--dim);text-transform:uppercase;font-family:var(--mono);margin-bottom:12px}
+.footer__portal-title{font-size:22px;letter-spacing:.04em;color:var(--txt);line-height:1.5}
+.footer__portal-desc{font-size:13.5px;line-height:1.9;color:var(--faint);margin-top:10px}
+.footer__portal-btn{font-size:13px;letter-spacing:.2em;color:#fff;text-transform:uppercase;font-family:var(--mono);padding:15px 30px;background:var(--gold);border:1px solid var(--gold);transition:background .3s,color .3s,box-shadow .3s}
+.footer__portal-btn:hover{background:transparent;color:var(--gold);box-shadow:0 0 24px rgba(201,162,75,.35)}
 .footer__top{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:28px}
 .footer__brand{font-size:12.5px;letter-spacing:.42em;color:var(--dim);text-transform:uppercase;font-family:var(--mono)}
 .footer__links{display:flex;gap:26px;font-size:12.5px;letter-spacing:.3em;text-transform:uppercase;font-family:var(--mono)}
