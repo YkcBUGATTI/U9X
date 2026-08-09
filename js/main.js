@@ -206,12 +206,22 @@
     });
   }
 
-  /* ============ 自定义光标 ============ */
+  /* ============ 自定义光标（v3.2：rAF 节流 + transform 定位，消除逐帧 layout） ============ */
   var cursor = qs(".cursor");
   if (cursor && fine) {
+    var curX = 0, curY = 0, curTick = false;
+    var CUR_SMALL = 12, CUR_HOVER = 40; /* 与 CSS .cursor / .is-hover 尺寸一致 */
+    function renderCursor() {
+      curTick = false;
+      var s = cursor.classList.contains("is-hover") ? CUR_HOVER : CUR_SMALL;
+      /* translate3d 走合成器线程；减 s/2 承担原 CSS translate(-50%,-50%) 的居中 */
+      cursor.style.transform = "translate3d(" + (curX - s / 2).toFixed(1) + "px," + (curY - s / 2).toFixed(1) + "px,0)";
+    }
     doc.addEventListener("mousemove", function (e) {
-      cursor.style.left = e.clientX + "px";
-      cursor.style.top = e.clientY + "px";
+      curX = e.clientX; curY = e.clientY;
+      if (curTick) return;
+      curTick = true;
+      win.requestAnimationFrame(renderCursor);
     });
     doc.addEventListener("mouseover", function (e) {
       cursor.classList.toggle("is-hover", !!e.target.closest("a,button,.dcard,.gallery figure,[data-lb]"));
@@ -256,4 +266,54 @@
 
   /* ============ 初始 ============ */
   onScroll();
+})();
+
+/* ============================================================
+   v3.1 增量（纯追加）：hero 滚动叙事 + 页内锚点平滑滚动
+   ============================================================ */
+(function () {
+  "use strict";
+  var doc = document, win = window;
+  var reduced = win.matchMedia && win.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var hero = doc.querySelector(".hero__content");
+  var END = 0.9;   /* 视口高度 90% 处叙事结束（终态与 .fade 对齐） */
+  var TY = 46;     /* 终态位移 = .fade 的 translateY(46px) */
+  var SC = 0.97;   /* 终态缩放 = .fade 的 scale(.97) */
+
+  function heroStory() {
+    if (!hero) return;
+    var y = win.scrollY || doc.documentElement.scrollTop;
+    if (y > win.innerHeight) {
+      /* 离开 hero：交还 class 控制（值一致，无跳变） */
+      hero.style.transition = "";
+      hero.style.opacity = "";
+      hero.style.transform = "";
+      return;
+    }
+    var p = Math.min(y / (win.innerHeight * END), 1);
+    hero.style.transition = "none"; /* 每帧直接落值，避免过渡拖尾 */
+    hero.style.opacity = String(1 - p);
+    hero.style.transform = "translateY(" + (TY * p).toFixed(2) + "px) scale(" + (1 - (1 - SC) * p).toFixed(4) + ")";
+  }
+
+  if (hero && !reduced) {
+    var ticking = false;
+    win.addEventListener("scroll", function () {
+      if (ticking) return;
+      ticking = true;
+      win.requestAnimationFrame(function () { heroStory(); ticking = false; });
+    }, { passive: true });
+    heroStory();
+  }
+
+  /* 页内锚点平滑滚动（.nav__brand → #hero；menuOverlay 链接由既有逻辑处理） */
+  doc.querySelectorAll('.nav__brand[href^="#"]').forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      var t = doc.getElementById(a.getAttribute("href").slice(1));
+      if (t) {
+        e.preventDefault();
+        t.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+      }
+    });
+  });
 })();

@@ -28,6 +28,34 @@
   --display:'BUGATTI Display','Ferrari Sans','Helvetica Neue',Arial,sans-serif;
   --text:'Ferrari Sans','Noto Sans','Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
   --mono:'BUGATTI Mono',ui-monospace,'Cascadia Mono',Consolas,'Courier New',monospace;
+
+  /* ===== 品牌色系统（v3.1 补齐：--red 此前未定义导致全站红色回退失效） ===== */
+  --red:#d13b2f;            /* 品牌红（按现有 rgba(209,59,47,x) 反推） */
+  --red-2:#e8594e;          /* 品牌红 · 亮（hover/高亮） */
+  --red-rgb:209,59,47;      /* 供 rgba(var(--red-rgb),alpha) 使用 */
+  --accent:var(--red);      /* 强调别名 */
+  --em:var(--gold);         /* 正文强调（金） */
+
+  /* 玻璃拟态（克制使用） */
+  --glass:rgba(255,255,255,.055);
+  --glass-brd:rgba(255,255,255,.14);
+
+  /* 细腻阴影层级 */
+  --shadow-1:0 2px 14px rgba(0,0,0,.30);
+  --shadow-2:0 18px 44px -14px rgba(0,0,0,.55),0 2px 10px rgba(0,0,0,.25);
+  --shadow-3:0 32px 72px -22px rgba(0,0,0,.68),0 4px 16px rgba(0,0,0,.3);
+
+  /* 品牌渐变（金→红） */
+  --grad-brand:linear-gradient(90deg,#c9a24b,#d13b2f);
+  --grad-brand-soft:linear-gradient(90deg,rgba(201,162,75,.5),rgba(209,59,47,.5));
+
+  /* 统一排版层级 */
+  --fs-h1:clamp(30px,4vw,52px);
+  --fs-h2:clamp(24px,2.8vw,36px);
+  --fs-body:17px;
+  --fs-small:13px;
+  --ls-title:.08em;
+  --ls-label:.3em;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--fg)}
@@ -746,3 +774,174 @@ html,body{overflow-x:hidden;max-width:100%}
   .footer__contact-btns{flex-direction:column;width:100%;margin-left:0}
   .footer__contact-btns .sbtn{width:100%;min-width:0}
 }
+
+/* ============================================================
+   v3.1 视觉增强层（纯追加，不修改上方任何规则；可整体回滚）
+   品牌色点缀 · 玻璃拟态 · 卡片微交互 · hero 光效与滚动叙事
+   ============================================================ */
+
+/* ---------- 精致字体渲染与标题层级微调 ---------- */
+body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+.sec-title,.cb__name,.mr-title,.trow__body h3,.tech-card__body h3,.tb h4,.tl-body h3{letter-spacing:.08em}
+
+/* ---------- 品牌色点缀线（金→红渐变） ---------- */
+.sec-title::after{background:var(--grad-brand)}
+.cb__name::after{background:var(--grad-brand)}
+.conclusion__title::after{background:var(--grad-brand)}
+
+/* ---------- 玻璃拟态（克制点缀） ---------- */
+.nav.scrolled{
+  box-shadow:0 1px 0 rgba(255,255,255,.05),0 14px 34px -14px rgba(0,0,0,.6);
+  background:rgba(10,10,13,.78);
+}
+.scroll-gauge{
+  background:var(--glass);border:1px solid var(--glass-brd);border-radius:50%;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:var(--shadow-1);
+}
+.scroll-gauge svg{position:absolute;inset:0;z-index:0}
+.scroll-gauge .sg__num{position:relative;z-index:1}
+.menu-overlay{background:rgba(10,10,13,.90)}
+.menu-overlay::before{background:radial-gradient(640px 320px at 50% 6%,rgba(var(--red-rgb),.20),transparent 72%)}
+
+/* ---------- hero 光效流动（伪元素实现，零 HTML 改动） ---------- */
+.hero__veil::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(52% 44% at 16% 36%,rgba(var(--red-rgb),.17),transparent 70%),
+    radial-gradient(48% 40% at 84% 20%,rgba(201,162,75,.13),transparent 70%);
+  background-size:180% 180%,170% 170%;
+  background-position:0% 0%,100% 0%;
+  mix-blend-mode:screen;
+  animation:heroGlow 16s var(--ease2) infinite alternate;
+}
+@keyframes heroGlow{
+  0%{background-position:0% 0%,100% 0%}
+  45%{background-position:55% 52%,38% 48%}
+  100%{background-position:100% 22%,0% 34%}
+}
+@media (max-width:640px){.hero__veil::after{opacity:.5}}
+
+/* ---------- hero 内容滚动缩放淡出（与 JS 连续叙事终态对齐） ---------- */
+.hero__content.fade{transform:translateY(46px) scale(.97)}
+
+/* ---------- 卡片微交互：浮起 + 阴影 + 描边高亮（仅精确指针设备） ---------- */
+@media (hover:hover){
+  .hcard,.tech-card,.mc,.numrow .n,.gallery figure,.trow__stats .mc,.ps-duo figure,.title-fig,.media-row__img{
+    transition:border-color .4s var(--ease),transform .45s var(--ease),box-shadow .45s var(--ease),background .4s;
+  }
+  .hcard:hover,.tech-card:hover,.mc:hover,.numrow .n:hover,.gallery figure:hover,.trow__stats .mc:hover,.ps-duo figure:hover{
+    box-shadow:var(--shadow-2),0 0 0 1px rgba(var(--red-rgb),.30);
+    transform:translateY(-6px);
+  }
+  .title-fig:hover,.media-row__img:hover{box-shadow:var(--shadow-2),0 0 0 1px rgba(var(--red-rgb),.22)}
+  .ps-duo figure:hover{box-shadow:var(--shadow-2),0 0 0 1px rgba(var(--red-rgb),.25);border-color:var(--red)}
+  .gallery figure:hover{transform:translateY(-6px)}
+  /* 双栏配图 hover 微缩放 */
+  .two-col .tc img{transition:filter .5s,transform .7s var(--ease),box-shadow .5s}
+  .two-col .tc:hover img{transform:scale(1.02);filter:saturate(1)}
+  /* 传承卡年份描边随 hover 提亮 */
+  .hcard:hover::before{-webkit-text-stroke:1px rgba(var(--red-rgb),.55)}
+}
+
+/* ---------- 按钮反馈：active 按压 + 焦点可见环 ---------- */
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.lang-btn:focus-visible,.nav__menu-btn:focus-visible,
+.menu-overlay__close:focus-visible,.lb-close:focus-visible,
+.footer__portal-btn:focus-visible,.footer__contact-btns .sbtn:focus-visible{
+  outline:2px solid var(--red);outline-offset:3px;
+}
+
+/* ---------- 章节过渡条：品牌光晕微调 ---------- */
+.chapter-break{
+  background:
+    radial-gradient(760px 280px at 0% 0%,rgba(var(--red-rgb),.20),transparent 60%),
+    linear-gradient(180deg,rgba(255,255,255,.045),transparent 78%);
+}
+
+/* ---------- 细节：卡片内数字 hover 跟随品牌红 ---------- */
+.mc b{transition:color .3s}
+.mc:hover b{color:var(--red)}
+
+/* ---------- 减少动态：增强层动画一并降级（内容直接可见） ---------- */
+@media (prefers-reduced-motion:reduce){
+  .hero__content.fade{transform:translateY(46px)}
+  .hero__veil::after{animation:none;opacity:.35}
+  .scroll-gauge{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .nav.scrolled{backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+
+/* ============================================================
+   v3.2 全屏目录：双列布局 + 玻璃卡片美化（纯追加覆写）
+   - 删除与目录重叠的背景装饰（顶部光晕）
+   - 背景加实，不再透出页面文字
+   - 7 项双列网格，条目玻璃卡片化，当前章节红标
+   ============================================================ */
+
+/* 删除顶部红色光晕装饰（原 :118 与 v3.1 :805 两处一并压掉） */
+.menu-overlay::before{content:none}
+
+/* 背景加实：避免页面大标题文字从半透明背景透出与目录重叠 */
+.menu-overlay{background:rgba(10,10,13,.975)}
+
+/* 双列网格（7 项 → 4 行） */
+.menu-overlay__nav{
+  display:grid;grid-template-columns:repeat(2,minmax(250px,360px));
+  gap:14px 28px;text-align:left;width:min(780px,calc(100% - 48px));
+}
+
+/* 条目：玻璃卡片（左对齐，金色序号；不用 backdrop-filter——7 个嵌套 blur 会重采样导致菜单卡顿） */
+.menu-overlay__nav a{
+  display:flex;align-items:center;justify-content:flex-start;gap:16px;
+  padding:20px 26px;border:1px solid var(--glass-brd);border-radius:10px;
+  background:var(--glass);
+  font-size:clamp(17px,2.2vw,21px);letter-spacing:.16em;color:var(--dim);text-align:left;
+  transition:border-color .35s var(--ease),background .35s var(--ease),transform .4s var(--ease),box-shadow .4s var(--ease),color .3s;
+}
+.menu-overlay__nav a .idx{
+  font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--gold);
+  min-width:36px;padding:5px 0;border-right:1px solid var(--glass-brd);margin-right:8px;
+  transition:color .3s;
+}
+
+/* 当前章节：左侧红色内描边 + 红字 */
+.menu-overlay__nav a.on{
+  color:var(--red);border-color:rgba(var(--red-rgb),.55);
+  background:rgba(var(--red-rgb),.08);
+  box-shadow:inset 2px 0 0 var(--red);
+}
+.menu-overlay__nav a.on .idx{color:var(--red)}
+
+/* hover：浮起 + 阴影 + 红色描边（仅精确指针设备；animation:none 解除交错动画的 transform 占用） */
+@media (hover:hover){
+  .menu-overlay__nav a:hover{
+    animation:none;opacity:1;transform:translateY(-3px);
+    border-color:rgba(var(--red-rgb),.6);background:rgba(var(--red-rgb),.10);
+    box-shadow:var(--shadow-2),0 0 0 1px rgba(var(--red-rgb),.30);
+    color:#fff;
+  }
+}
+
+/* 进入动画：条目交错淡入上移（reduced-motion 下直接显示） */
+@media (prefers-reduced-motion:no-preference){
+  .menu-overlay__nav a{opacity:0;transform:translateY(16px)}
+  .menu-overlay.open .menu-overlay__nav a{animation:menuItemIn .55s var(--ease2) forwards}
+  .menu-overlay.open .menu-overlay__nav a:nth-child(1){animation-delay:.04s}
+  .menu-overlay.open .menu-overlay__nav a:nth-child(2){animation-delay:.08s}
+  .menu-overlay.open .menu-overlay__nav a:nth-child(3){animation-delay:.12s}
+  .menu-overlay.open .menu-overlay__nav a:nth-child(4){animation-delay:.16s}
+  .menu-overlay.open .menu-overlay__nav a:nth-child(5){animation-delay:.20s}
+  .menu-overlay.open .menu-overlay__nav a:nth-child(6){animation-delay:.24s}
+  .menu-overlay.open .menu-overlay__nav a:nth-child(7){animation-delay:.28s}
+}
+@keyframes menuItemIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* 移动端：回单列卡片，顶部品牌让位 */
+@media (max-width:640px){
+  .menu-overlay__nav{grid-template-columns:1fr;width:min(420px,calc(100% - 36px));gap:10px}
+  .menu-overlay__nav a{padding:14px 18px;font-size:clamp(15px,4.6vw,18px);gap:12px}
+  .menu-overlay__nav a .idx{min-width:30px}
+  .menu-overlay__brand{top:64px}
+}
+/* 矮视口（手机横屏）：隐藏顶部品牌文字，彻底消除重叠 */
+@media (max-height:480px){.menu-overlay__brand{display:none}}
